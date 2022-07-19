@@ -7,7 +7,7 @@ import './WordChainToken.sol';
 contract TokenManager is Ownable {
 
     address private _owner;
-    WordChainToken private wcToken;
+    WordChainToken public wcToken;
     uint8 public constant tokensPerEth = 20;
 
     address[] public stakers;
@@ -31,9 +31,9 @@ contract TokenManager is Ownable {
         wcToken.transfer(msg.sender, tokenAmount);
     }
 
-    function modifyTokenBuyPrice(uint newPrice) public onlyOwner {
-        tokenBuyPrice = newPrice;
-    }
+    // function modifyTokenBuyPrice(uint newPrice) public onlyOwner {
+    //     tokensPerEth = newPrice;
+    // }
 
     function stakeToken(uint numOfTokens, string memory tournamentKey) public {
         require(numOfTokens > 0, 'Supply value less than zero');
@@ -42,15 +42,15 @@ contract TokenManager is Ownable {
         require(lowestForm <= wcToken.balanceOf(msg.sender), 'Not enough tokens');
         wcToken.transferFrom(msg.sender, address(this), lowestForm);
         stakingBalance[tournamentKey][msg.sender] += lowestForm;
-        // if (!hasStaked[msg.sender]) {
-        //     stakersArrayIndexes[msg.sender] = stakers.length;
-        //     stakers.push(msg.sender);
-        //     hasStaked[msg.sender] = true;
-        // }
+        
     }
 
-    function issueToken(string memory tournamentKey, address user) public onlyOwner {
-        wcToken.transfer(user, stakingBalance[tournamentKey][user]);
+    // function issueToken(string memory tournamentKey, address user) public onlyOwner {
+    //     wcToken.transfer(user, stakingBalance[tournamentKey][user]);
+    // }
+
+    function getTokenDecimals() public view returns (uint8) {
+        return wcToken.decimals();
     }
 
     function getTokenBalance(address user) public view returns (uint) {
@@ -62,11 +62,15 @@ contract TokenManager is Ownable {
     }
 
     function transferTokens(address to, uint amount) public onlyOwner {
-        if (getTokenBalance(address(this)) < amount *10 **wcToken.decimals())
-        uint8 dec = bubToken._decimals();
-        uint lowestForm = amount * 10 ** dec;
-        uint tokenBalance = getTokenBalance(msg.sender);
+        // if (getTokenBalance(address(this)) < amount *10 **wcToken.decimals()) {
+
+        // }
+        uint lowestForm = amount * 10 ** wcToken.decimals();
         wcToken.transfer(to, lowestForm);
         
+    }
+
+    function setUserStakingBalance(address addr, string memory tournamentKey, uint256 amount) public {
+        stakingBalance[tournamentKey][addr] = amount;
     }
 }
