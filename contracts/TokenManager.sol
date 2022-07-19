@@ -12,8 +12,6 @@ contract TokenManager is Ownable {
 
     address[] public stakers;
     mapping(string => mapping(address => uint)) public stakingBalance;
-    mapping(address => bool) public hasStaked;
-    mapping(address => uint) stakersArrayIndexes;
 
     event BuyTokens(address indexed, uint256, uint256);
 
@@ -31,14 +29,22 @@ contract TokenManager is Ownable {
         wcToken.transfer(msg.sender, tokenAmount);
     }
 
+    function withdrawTokens(uint256 amount) public payable returns (bool) {
+        uint ethAmount = (amount * 10**wcToken.decimals())/20;
+        if (getETHBalance() <= ethAmount) {
+            return false;
+        }
+        payable(msg.sender).transfer(ethAmount);
+        return true;
+    }
+
     // function modifyTokenBuyPrice(uint newPrice) public onlyOwner {
     //     tokensPerEth = newPrice;
     // }
 
     function stakeToken(uint numOfTokens, string memory tournamentKey) public {
         require(numOfTokens > 0, 'Supply value less than zero');
-        uint8 dec = wcToken.decimals();
-        uint lowestForm = numOfTokens * 10 ** dec;
+        uint lowestForm = numOfTokens * 10 ** wcToken.decimals();
         require(lowestForm <= wcToken.balanceOf(msg.sender), 'Not enough tokens');
         wcToken.transferFrom(msg.sender, address(this), lowestForm);
         stakingBalance[tournamentKey][msg.sender] += lowestForm;
@@ -70,7 +76,7 @@ contract TokenManager is Ownable {
         
     }
 
-    function setUserStakingBalance(address addr, string memory tournamentKey, uint256 amount) public {
+    function setUserStakingBalance(address addr, string memory tournamentKey, uint256 amount) public onlyOwner {
         stakingBalance[tournamentKey][addr] = amount;
     }
 }

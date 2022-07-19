@@ -4,6 +4,17 @@ This project demonstrates an advanced Hardhat use case, integrating other tools 
 
 The project comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts. It also comes with a variety of other tools, preconfigured to work with the project code.
 
+
+# Contract Addresses
+
+`WordChainToken` - 0x97e4A0c5cD3B8325d891ad70F21636B256FdCdD9
+
+`WordChainAdmin` - 0x97e4A0c5cD3B8325d891ad70F21636B256FdCdD9
+
+`TokenManager` - 0x8593eD3e4FB98933c9eC63c244114bB63A80a90b
+
+`WordChain` - 0x0eD3CD0C42BC1374e9129fB626CC767B87a63461
+
 Try running some of the following tasks:
 
 ```shell
@@ -44,3 +55,5 @@ npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
 # Performance optimizations
 
 For faster runs of your tests and scripts, consider skipping ts-node's type checking by setting the environment variable `TS_NODE_TRANSPILE_ONLY` to `1` in hardhat's environment. For more details see [the documentation](https://hardhat.org/guides/typescript.html#performance-optimizations).
+
+

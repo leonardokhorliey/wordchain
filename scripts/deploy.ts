@@ -19,21 +19,34 @@ async function main() {
 
   await wordChainToken.deployed();
 
-  console.log("Greeter deployed to:", wordChainToken.address);
+  console.log("Token deployed to:", wordChainToken.address);
+
+  const WordChainAdmin = await ethers.getContractFactory("WordChainAdmin");
+  const wordChainAdmin = await WordChainAdmin.deploy();
+
+  await wordChainAdmin.deployed();
+
+  console.log("Admin deployed to:", wordChainToken.address);
 
   const StakeManager = await ethers.getContractFactory("TokenManager");
   const stakeManager = await StakeManager.deploy(wordChainToken.address);
 
   await stakeManager.deployed();
 
-  console.log("Greeter deployed to:", stakeManager.address);
+  console.log("Stake Manager deployed to:", stakeManager.address);
 
   const WordChain = await ethers.getContractFactory("WordChain");
-  const wordChain = await WordChain.deploy(stakeManager.address);
+  const wordChain = await WordChain.deploy(stakeManager.address, wordChainAdmin.address);
 
   await wordChain.deployed();
 
   console.log("Greeter deployed to:", wordChain.address);
+
+  await wordChainToken.transfer( stakeManager.address, ethers.utils.parseEther("10000000") );
+
+  await wordChainToken.transferOwnership(wordChain.address);
+
+  await stakeManager.transferOwnership(wordChain.address);
 }
 
 // We recommend this pattern to be able to use async/await everywhere

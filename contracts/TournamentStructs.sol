@@ -7,7 +7,6 @@ struct Player {
         string username;
         uint8 score;
         uint256 gamesPlayed;
-        bool blacklisted;
     }
 
     // enum TournamentStatus {
@@ -27,6 +26,7 @@ struct Tournament {
     uint256 createdAt;
     address owner;
     string tournamentKey;
+    bool isAdminCreated;
 }
 
 struct UserTournament {

@@ -10,21 +10,6 @@ contract WordChainAdmin is Ownable {
 
     event AddAdmin(address indexed);
     event RemoveAdmin(address indexed);
-    
-
-    // modifier isNotBlacklisted(address addr) {
-    //     require(!checkIfBlacklisted(addr), "User blacklisted");
-    //     _;
-    // }
-
-    //  /**
-    //  * @dev Function to check that an address is an admin of a tournament
-    //  *
-    //  * @param addr   Address to check;
-    //  */
-    // function checkIfAdmin(address addr) internal view returns (bool) {
-    //     return admins[addr];
-    // }
 
      /**
      * @dev Function to add an array of addresses to tournament admins
@@ -51,12 +36,4 @@ contract WordChainAdmin is Ownable {
         emit RemoveAdmin(addr);
     }
 
-    // function checkIfBlacklisted(address addr) private view returns (bool) {
-    //     for (uint256 i = 0; i < blackList.length; i++) {
-    //         if (blackList[i] == addr) {
-    //             return true;
-    //         }
-    //     }
-    //     return false;
-    // }
 }
