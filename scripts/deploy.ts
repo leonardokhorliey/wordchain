@@ -26,7 +26,7 @@ async function main() {
 
   await wordChainAdmin.deployed();
 
-  console.log("Admin deployed to:", wordChainToken.address);
+  console.log("Admin deployed to:", wordChainAdmin.address);
 
   const StakeManager = await ethers.getContractFactory("TokenManager");
   const stakeManager = await StakeManager.deploy(wordChainToken.address);
@@ -47,6 +47,8 @@ async function main() {
   await wordChainToken.transferOwnership(wordChain.address);
 
   await stakeManager.transferOwnership(wordChain.address);
+
+  await wordChainAdmin.addAnAdmin("0x55cd6c271E16bA66E806ef7A7075218877818C62");
 }
 
 // We recommend this pattern to be able to use async/await everywhere

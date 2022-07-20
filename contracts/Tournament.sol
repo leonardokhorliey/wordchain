@@ -23,14 +23,14 @@ contract WordChain {
     Tournament[] public tournaments;
     address[] public users;
 
-    event CreateTournament(uint256 indexed tournamentId, string name, string description, uint256 deadline, uint8 minimumStake, bool isPrivate, uint256 startDate, address owner);
+    event CreateTournament(uint256 indexed tournamentId, string name, string description, uint256 deadline, uint8 minimumStake, bool isPrivate, string tournamentKey, uint256 startDate, address owner);
     event JoinTournament(uint256 indexed tournamentId, address userAddress);
     event CreateUser(address indexed userAddress, string userName);
     event DispatchReward(uint256 indexed transactionId, address userAddress, uint256 numberOfTokens);
     event BlackList(address indexed user);
     
 
-    constructor (address tokenManager_, address admin_) {
+    constructor (address payable tokenManager_, address admin_) {
         stakeManager = TokenManager(tokenManager_);
         adminManager = WordChainAdmin(admin_);
     }
@@ -82,6 +82,7 @@ contract WordChain {
             createdAt: block.timestamp,
             owner: msg.sender,
             tournamentKey: key,
+            numberOfParticipants: adminManager.admins(msg.sender) ? 0 : 1,
             isAdminCreated: adminManager.admins(msg.sender) ? true : false
         });
         tournaments.push(newTournament);
@@ -98,7 +99,12 @@ contract WordChain {
             }));
         }
         
-        emit CreateTournament(id_, name_, desc_, block.timestamp + (interval_ *60), minimumStake_, isPrivate_, block.timestamp, msg.sender);
+        emit CreateTournament(id_, name_, desc_, block.timestamp + (interval_ *60), minimumStake_, isPrivate_, key, block.timestamp, msg.sender);
+    }
+
+
+    function getAllTournaments() public view returns (Tournament[] memory) {
+        return tournaments;
     }
 
 
@@ -164,6 +170,7 @@ contract WordChain {
             gamesPlayed: 0
         }));
         tournaments[tournamentId_].totalStake += stakeAmount;
+        tournaments[tournamentId_].numberOfParticipants += 1;
         joinedTournaments[msg.sender].push(tournamentId_);
 
         emit JoinTournament(tournamentId_, msg.sender);

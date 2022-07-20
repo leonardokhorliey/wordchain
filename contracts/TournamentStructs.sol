@@ -26,6 +26,7 @@ struct Tournament {
     uint256 createdAt;
     address owner;
     string tournamentKey;
+    uint256 numberOfParticipants;
     bool isAdminCreated;
 }
 

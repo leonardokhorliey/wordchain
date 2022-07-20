@@ -8,16 +8,22 @@ contract TokenManager is Ownable {
 
     address private _owner;
     WordChainToken public wcToken;
-    uint8 public constant tokensPerEth = 20;
+    uint8 public constant tokensPerEth = 200;
 
     address[] public stakers;
     mapping(string => mapping(address => uint)) public stakingBalance;
 
-    event BuyTokens(address indexed, uint256, uint256);
+    event BuyTokens(address indexed buyer, uint256 ethSpent, uint256 tokenAmount);
 
     constructor (address WCToken) {
         _owner = msg.sender;
         wcToken = WordChainToken(WCToken);
+    }
+
+    receive() external payable {}
+
+    fallback() external payable {
+
     }
 
     function getETHBalance() public view returns (uint256) {
@@ -27,6 +33,7 @@ contract TokenManager is Ownable {
     function buyTokens() public payable {
         uint256 tokenAmount = msg.value * tokensPerEth;
         wcToken.transfer(msg.sender, tokenAmount);
+        emit BuyTokens(msg.sender, msg.value, tokenAmount);
     }
 
     function withdrawTokens(uint256 amount) public payable returns (bool) {
@@ -34,7 +41,10 @@ contract TokenManager is Ownable {
         if (getETHBalance() <= ethAmount) {
             return false;
         }
-        payable(msg.sender).transfer(ethAmount);
+        
+        wcToken.transferFrom(msg.sender, address(this), amount * 10**wcToken.decimals());
+        (bool sent, ) = payable(msg.sender).call{value: ethAmount}("");
+        require(sent, "Failed to send Ether");
         return true;
     }
 
