@@ -37,7 +37,7 @@ contract TokenManager is Ownable {
     }
 
     function withdrawTokens(uint256 amount) public payable returns (bool) {
-        uint ethAmount = (amount * 10**wcToken.decimals())/20;
+        uint ethAmount = (amount * 10**wcToken.decimals())/tokensPerEth;
         if (getETHBalance() <= ethAmount) {
             return false;
         }
@@ -87,6 +87,6 @@ contract TokenManager is Ownable {
     }
 
     function setUserStakingBalance(address addr, string memory tournamentKey, uint256 amount) public onlyOwner {
-        stakingBalance[tournamentKey][addr] = amount;
+        stakingBalance[tournamentKey][addr] = amount*10**wcToken.decimals();
     }
 }

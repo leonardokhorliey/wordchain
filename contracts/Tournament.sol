@@ -77,7 +77,7 @@ contract WordChain {
             description: desc_,
             deadline: block.timestamp + (interval_ *60),
             minimumStakeAmount: minimumStake_ * 10 ** uint256(stakeManager.getTokenDecimals()),
-            totalStake: 0,
+            totalStake: stakeManager.getAmountStaked(key, msg.sender),
             isPrivate: isPrivate_,
             createdAt: block.timestamp,
             owner: msg.sender,
