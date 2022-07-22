@@ -178,7 +178,63 @@ describe("WordChain", function () {
 
   })
 
-  // it("Should create tournament ")
+  it("Should create tournament and set tournament parameters", async () => {
+    const testName = "Nigeria";
+    const description = "Tournament for Nigerians";
+    const duration = 18;
+    const minimumStake = 1;
+
+    await wordChain.createTournament(testName, description, duration, minimumStake, false, assumedTournamentKey);
+
+    const tournament = await wordChain.tournaments(0);
+    expect(tournament.id).to.equal(0);
+    expect(tournament.name).to.equal("Nigeria");
+    expect(tournament.description).to.equal("Tournament for Nigerians");
+    expect(tournament.isPrivate).to.equal(false);
+    expect(tournament.numberOfParticipants).to.equal(0);
+  })
+
+  it("Should get all tournaments", async () => {
+    const getter = await wordChain.getAllTournaments();
+
+    let tournaments = [];
+    getter.forEach((ele: any, idx: any) => {
+      let item : any = [];
+      item.id = ele.id;
+      item.name = ele.name;
+      item.description = ele.description;
+      item.deadline = ele.deadline;
+      item.minimumStakeAmount = ele.minimumStakeAmount;
+      item.totalStake = ele.totalStake;
+      item.isPrivate = ele.isPrivate;
+      item.createdAt = ele.createdAt;
+      item.owner = ele.owner;
+      item.tournamentKey = ele.tournamentKey;
+      item.numberOfParticipants = ele.numberOfParticipants;
+      item.isAdminCreated = ele.isAdminCreated;
+      tournaments.push(item);
+    });
+
+    expect(tournaments.length).to.equal(1);
+  })
+
+  it("Should create username", async () => {
+    await wordChain.connect(secondAddress).createUser("bigboy");
+
+    expect(await wordChain.userNames(secondAddress.address)).to.equal("bigboy");
+    expect(await wordChain.users(0)).to.equal(secondAddress.address);
+  }) 
+
+  it("Should let user join tournament", async () => {
+    await wordChainToken.connect(secondAddress).approve(stakeManager.address, 2);
+    await stakeManager.connect(secondAddress).stakeToken(2, assumedTournamentKey);
+
+
+    await wordChain.connect(secondAddress).joinTournament(0, assumedTournamentKey);
+
+    const player = await wordChain.tournamentPlayers(0, 0);
+    expect(player.add_).to.equal(secondAddress.address)
+  })
 })
 
 

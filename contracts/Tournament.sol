@@ -123,16 +123,30 @@ contract WordChain {
         return tournaments_;
     }
 
+    /**
+     * @dev                  Public function to retrieve tournaments owned by a user.
+     *
+     * @param add_           user address.
+     */
     function getTournamentsOwned(address add_) public view returns (Tournament[] memory) {
         return getTourmanentsWithIds(ownedTournaments[add_]);
     }
 
+    /**
+     * @dev                  Public function to retrieve tournaments joined by a user.
+     *
+     * @param add_           user address.
+     */
     function getTournamentsJoined(address add_) public view returns (Tournament[] memory) {
         return getTourmanentsWithIds(joinedTournaments[add_]);
     }
 
 
-
+     /**
+     * @dev                  Check if a username already exists by a user on the system during account creation.
+     *
+     * @param username_           Username sent by user.
+     */
     function checkIfUsernameExists(string memory username_) public view returns (bool) {
         for (uint i = 0; i < users.length; i++) {
             if (keccak256(abi.encodePacked(userNames[users[i]])) == keccak256(abi.encodePacked(username_))) {
@@ -143,6 +157,12 @@ contract WordChain {
         return false;
     }
 
+    /**
+     * @dev                  Public function to create a new user on the WordChain contract. User is usually defined by username,
+     *                       and the username is unique to every user
+     *
+     * @param username_           Username sent by the user.
+     */
     function createUser(string memory username_) public {
         require (!checkIfUsernameExists(username_), "The username you entered is already taken");
         users.push(msg.sender);
@@ -151,13 +171,24 @@ contract WordChain {
         emit CreateUser(msg.sender, username_);
     }
 
+    /**
+     * @dev                  Public function to enable a user join a tournament.
+     *
+     * @param tournamentId_  ID for Tournament to join. ID usually aligns with the index of the tournament in tournaments array, as tournaments can't be deleted.
+     * @param key_           Tournament Key for the tournament to join. This is passed by default from FE for a public tournament, but must be provided by user joining a private one.
+     */
     function joinTournament(uint256 tournamentId_, string memory key_) public isNotBlacklisted(msg.sender) {
+
+        // An admin address can not join a tournament
         require(!adminManager.admins(msg.sender), "An admin can not join a tournament");
+
+        // Mainly confirm tournament key when tournament is private.
         if (tournaments[tournamentId_].isPrivate) {
             require (keccak256(abi.encodePacked(key_)) == keccak256(abi.encodePacked(tournaments[tournamentId_].tournamentKey)), "Invalid Tournament Key");
         }
         
-        uint stakeAmount = stakeManager.getAmountStaked(key_, msg.sender);
+        // Get the amount user already staked to stake manager.
+        uint stakeAmount = stakeManager.getAmountStaked(tournaments[tournamentId_].tournamentKey, msg.sender);
         require (stakeAmount >= tournaments[tournamentId_].minimumStakeAmount, "You have not staked sufficient to join this tournament");
         require (checkIfUserIsATournamentPlayer(tournamentId_, msg.sender) < 0, "You are already a part of this tournament");
 
@@ -196,6 +227,14 @@ contract WordChain {
         return false;
     }
 
+    /**
+     * @dev                  Public function to dispatch the earned rewards to the top place members at the end of a tournament.
+     *
+     * @param tournamentId_  Tournament ID for which to distribute rewards
+     * @param first          The user address in first position at end of tournament
+     * @param second         The user address in second place
+     * @param third          The user address in third place
+     */
     function dispatchRewards(uint256 tournamentId_, address first, address second, address third) public TournamentExists(tournamentId_) isAdmin(msg.sender) {
         require (block.timestamp > tournaments[tournamentId_].deadline, "Rewards can only be sent at the end of a Tournament");
         require (checkIfUserIsATournamentPlayer(tournamentId_, first) >= 0 && checkIfUserIsATournamentPlayer(tournamentId_, second) >= 0 && 
@@ -214,6 +253,13 @@ contract WordChain {
         tournaments[tournamentId_].totalStake = 0;
     }
 
+    /**
+     * @dev                  Public function to send score from one wordle game attempt.
+     *
+     * @param tournamentId_  Tournament ID being played under.
+     * @param score          Score user attained in the game
+     * @param playerTournamentId    Player id of user in tournament list
+     */
     function sendScore(uint256 tournamentId_, uint8 score, uint256 playerTournamentId) public TournamentExists(tournamentId_) isNotBlacklisted(msg.sender) {
         require (block.timestamp <= tournaments[tournamentId_].deadline, "Can only set score during tournament");
         require (score < 7, "Score sent is beyond threshold.");
@@ -245,6 +291,11 @@ contract WordChain {
 
     // }
 
+    /**
+     * @dev                  Public function to blacklist a user if highlighted to be suspicious/fraudulent .
+     *
+     * @param addr           user address to be blacklisted
+     */
     function blackListAddress(address addr) public isAdmin(msg.sender) {
         uint256[] memory ownedTournaments_ = ownedTournaments[addr];
         uint256[] memory joinedTournaments_ = joinedTournaments[addr];
@@ -272,5 +323,13 @@ contract WordChain {
         blackList[addr] = true;
     }
 
+    /**
+     * @dev                  Public function to withdraw ETH from the TokenManager contract that accepts staked ETH.
+     *
+     * @param weiAmount      Amount of WEI to be sent.
+     */
+    function defundStakingManager(uint256 weiAmount) public isAdmin(msg.sender) returns (bool sent) {
+        sent = stakeManager.withdrawContractEth(weiAmount, payable(adminManager.owner()));
+    }
 
 }

@@ -42,7 +42,7 @@ async function main() {
 
   console.log("Greeter deployed to:", wordChain.address);
 
-  await wordChainToken.transfer( stakeManager.address, ethers.utils.parseEther("10000000") );
+  await wordChainToken.transfer( stakeManager.address, ethers.utils.parseEther("100000000") );
 
   await wordChainToken.transferOwnership(wordChain.address);
 
