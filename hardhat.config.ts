@@ -31,8 +31,8 @@ const config: HardhatUserConfig = {
         process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [],
     },
     rinkeby: {
-      url: "https://rinkeby.infura.io/v3/b913395718bd49d581b52b56347c01f8", //Infura url with projectId
-      accounts: ["714d2202b192865aa486543e5e8f3c5a513125d358bea99c333dba36eb4faebb"] // add the account that will deploy the contract (private key)
+      url: `https://rinkeby.infura.io/v3/${process.env.INFURA_ID}`, //Infura url with projectId
+      accounts: process.env.PRIVATE_KEY !== undefined ? [process.env.PRIVATE_KEY] : [] // add the account that will deploy the contract (private key)
     }
   },
   gasReporter: {

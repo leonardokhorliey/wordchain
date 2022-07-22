@@ -5,55 +5,14 @@ This project demonstrates an advanced Hardhat use case, integrating other tools 
 The project comes with a sample contract, a test for that contract, a sample script that deploys that contract, and an example of a task implementation, which simply lists the available accounts. It also comes with a variety of other tools, preconfigured to work with the project code.
 
 
-# Contract Addresses
+# Verified Contract Addresses
 
-`WordChainToken` - 0x97e4A0c5cD3B8325d891ad70F21636B256FdCdD9
+`WordChainToken` - https://rinkeby.etherscan.io/address/0x0e1ed208aDC622186c4450335693F05B310aF307#code
 
-`WordChainAdmin` - 0x97e4A0c5cD3B8325d891ad70F21636B256FdCdD9
+`WordChainAdmin` - https://rinkeby.etherscan.io/address/0xCDec34eDf021D408918C1f33d6E5D29c59Dfe113#code
 
-`TokenManager` - 0x8593eD3e4FB98933c9eC63c244114bB63A80a90b
+`TokenManager` - https://rinkeby.etherscan.io/address/0xB4676b48df8137445CcF0278E002384B02DFE1A1#code
 
-`WordChain` - 0x0eD3CD0C42BC1374e9129fB626CC767B87a63461
-
-Try running some of the following tasks:
-
-```shell
-npx hardhat accounts
-npx hardhat compile
-npx hardhat clean
-npx hardhat test
-npx hardhat node
-npx hardhat help
-REPORT_GAS=true npx hardhat test
-npx hardhat coverage
-npx hardhat run scripts/deploy.ts
-TS_NODE_FILES=true npx ts-node scripts/deploy.ts
-npx eslint '**/*.{js,ts}'
-npx eslint '**/*.{js,ts}' --fix
-npx prettier '**/*.{json,sol,md}' --check
-npx prettier '**/*.{json,sol,md}' --write
-npx solhint 'contracts/**/*.sol'
-npx solhint 'contracts/**/*.sol' --fix
-```
-
-# Etherscan verification
-
-To try out Etherscan verification, you first need to deploy a contract to an Ethereum network that's supported by Etherscan, such as Ropsten.
-
-In this project, copy the .env.example file to a file named .env, and then edit it to fill in the details. Enter your Etherscan API key, your Ropsten node URL (eg from Alchemy), and the private key of the account which will send the deployment transaction. With a valid .env file in place, first deploy your contract:
-
-```shell
-hardhat run --network ropsten scripts/deploy.ts
-```
-
-Then, copy the deployment address and paste it in to replace `DEPLOYED_CONTRACT_ADDRESS` in this command:
-
-```shell
-npx hardhat verify --network ropsten DEPLOYED_CONTRACT_ADDRESS "Hello, Hardhat!"
-```
-
-# Performance optimizations
-
-For faster runs of your tests and scripts, consider skipping ts-node's type checking by setting the environment variable `TS_NODE_TRANSPILE_ONLY` to `1` in hardhat's environment. For more details see [the documentation](https://hardhat.org/guides/typescript.html#performance-optimizations).
+`WordChain` - https://rinkeby.etherscan.io/address/0xb082D7A581503B4D4a28012272049108B2C203eA#code
 
 
